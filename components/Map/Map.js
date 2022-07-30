@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import { useEffect } from 'react';
 import * as ReactLeaflet from 'react-leaflet';
 
-export default function Map({ children, className, ...rest }) {
+export default function Map({ children, location, ...rest }) {
   const { MapContainer, MapConsumer } = ReactLeaflet;
 
   useEffect(() => {
@@ -22,8 +22,15 @@ export default function Map({ children, className, ...rest }) {
   }, []);
 
   return (
-    <MapContainer className={className} {...rest}>
-      <MapConsumer>{(map) => children(ReactLeaflet, map)}</MapConsumer>
+    <MapContainer {...rest}>
+      <MapConsumer>
+        {(map) => (
+          <>
+            {children(ReactLeaflet, map)}
+            {/* <FlyTo location={location} /> */}
+          </>
+        )}
+      </MapConsumer>
     </MapContainer>
   );
 }
