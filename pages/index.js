@@ -59,25 +59,11 @@ export async function getStaticProps() {
   const zukunftAutarkiegrad =
     ((zukunftWind + zukunftSonne) * 100) / zukunftVerbrauch;
 
-  console.log(
-    ev_insgesamt,
-    pv,
-    wind,
-    capacity,
-    aktuellerVerbrauch,
-    aktuellerAutarkiegrad,
-    zukunftSonne,
-    zukunftWind,
-    zukunftAutarkiegrad,
-  );
-
   return {
     props: {
-      center: [47.78242, 13.547766],
-      //   center: [48.804186, 15.489089],
+      center: [48.804186, 15.489089],
       location: [48.804186, 15.489089],
-      //   zoom: 13,
-      zoom: 0,
+      zoom: 13,
       gemeindeName: gemeindename,
       aktuellerVerbrauch,
       aktuellerAutarkiegrad,
