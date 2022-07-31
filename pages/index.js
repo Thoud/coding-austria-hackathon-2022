@@ -1,12 +1,15 @@
 import Head from 'next/head';
 import Map from '../components/Map';
+import PopupContent from '../components/PopupContent';
 import styles from '../styles/Home.module.css';
 
-export default function Home({ center, location, zoom, polygons }) {
+export default function Home(props) {
+  const { center, location, zoom, polygons } = props;
+
   return (
     <>
       <Head>
-        <title>Create Next App</title>
+        <title>MuniciPAL</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
@@ -29,11 +32,10 @@ export default function Home({ center, location, zoom, polygons }) {
                   positions={polygon.path}
                 >
                   <Popup>
-                    A pretty CSS3 popup. <br /> Easily customizable.
+                    <PopupContent {...props} />
                   </Popup>
                 </Polygon>
               ))}
-              {/* <Marker position={center}></Marker> */}
             </>
           )}
         </Map>
@@ -43,13 +45,45 @@ export default function Home({ center, location, zoom, polygons }) {
 }
 
 export async function getStaticProps() {
+  const { getGemeinde, getCapacity } = await import('../utils/database');
+
+  const { ev_insgesamt, gemeindename } = await getGemeinde();
+  const capacity = await getCapacity();
+  const pv = capacity.pv['kapazität'];
+  const wind = capacity.wind['kapazität'];
+  const aktuellerVerbrauch = ev_insgesamt * 0.3 * 1000;
+  const aktuellerAutarkiegrad = ((pv + wind) * 100) / aktuellerVerbrauch;
+  const zukunftVerbrauch = aktuellerVerbrauch * 1.1224;
+  const zukunftSonne = pv * 10;
+  const zukunftWind = wind * 2;
+  const zukunftAutarkiegrad =
+    ((zukunftWind + zukunftSonne) * 100) / zukunftVerbrauch;
+
+  console.log(
+    ev_insgesamt,
+    pv,
+    wind,
+    capacity,
+    aktuellerVerbrauch,
+    aktuellerAutarkiegrad,
+    zukunftSonne,
+    zukunftWind,
+    zukunftAutarkiegrad,
+  );
+
   return {
     props: {
-      //   center: [47.78242, 13.547766],
-      center: [48.804186, 15.489089],
+      center: [47.78242, 13.547766],
+      //   center: [48.804186, 15.489089],
       location: [48.804186, 15.489089],
-      zoom: 13,
-      //   zoom: 8,
+      //   zoom: 13,
+      zoom: 0,
+      gemeindeName: gemeindename,
+      aktuellerVerbrauch,
+      aktuellerAutarkiegrad,
+      zukunftSonne,
+      zukunftWind,
+      zukunftAutarkiegrad,
       polygons: [
         {
           id: 1,

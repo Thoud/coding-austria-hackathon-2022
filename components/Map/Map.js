@@ -5,6 +5,7 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
 import { useEffect } from 'react';
 import * as ReactLeaflet from 'react-leaflet';
+import FlyTo from './FlyTo';
 
 export default function Map({ children, location, ...rest }) {
   const { MapContainer, MapConsumer } = ReactLeaflet;
@@ -27,7 +28,7 @@ export default function Map({ children, location, ...rest }) {
         {(map) => (
           <>
             {children(ReactLeaflet, map)}
-            {/* <FlyTo location={location} /> */}
+            <FlyTo location={location} />
           </>
         )}
       </MapConsumer>
