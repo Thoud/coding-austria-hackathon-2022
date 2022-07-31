@@ -1,6 +1,7 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import Image from 'next/image';
 import { useState } from 'react';
+import arrow from '../assets/arrow.png';
 import styles from '../styles/PopupContent.module.css';
 
 export default function PopupContent(props) {
@@ -15,6 +16,7 @@ export default function PopupContent(props) {
   } = props;
 
   const [potentialView, setPotentialView] = useState(false);
+  const [messageSent, setMessageSent] = useState(false);
   const [parent] = useAutoAnimate();
 
   return (
@@ -28,9 +30,7 @@ export default function PopupContent(props) {
           <p className={styles.text}>
             degree of self-sufficiency in %: {aktuellerAutarkiegrad}
           </p>
-          <div className={styles.iconBefore}>
-            <Image src="/arrow.png" alt="" width={1000} height={1000} />
-          </div>
+          {messageSent && <p className={styles.message}>Message sent!</p>}
           <div className={styles.buttonContainer}>
             <button
               className={styles.button}
@@ -41,6 +41,9 @@ export default function PopupContent(props) {
             >
               Calculate potential
             </button>
+            <div className={styles.iconBefore}>
+              <Image src={arrow} alt="" width={1000} height={1000} />
+            </div>
           </div>
         </div>
       )}
@@ -57,16 +60,17 @@ export default function PopupContent(props) {
             degree of self-sufficiency in %: {zukunftAutarkiegrad}
           </p>
           <div className={styles.icon1After}>
-            <Image src="/arrow.png" alt="" width={1000} height={1000} />
+            <Image src={arrow} alt="" width={1000} height={1000} />
           </div>
           <div className={styles.icon2After}>
-            <Image src="/arrow.png" alt="" width={1000} height={1000} />
+            <Image src={arrow} alt="" width={1000} height={1000} />
           </div>
           <div className={styles.buttonContainer}>
             <button
               className={styles.button}
               onClick={() => {
                 setPotentialView(false);
+                setMessageSent(true);
                 setChangeColor(false);
               }}
             >
