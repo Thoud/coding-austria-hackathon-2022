@@ -32,5 +32,8 @@ export async function getCapacity() {
     WHERE energiequelle = 'Windpark'
 `;
 
-  return { pv: pv[0], wind: wind[0] };
+  return {
+    pv: pv[0]['kapazität'],
+    wind: wind[0]['kapazität'],
+  };
 }

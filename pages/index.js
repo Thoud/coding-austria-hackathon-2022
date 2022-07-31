@@ -1,10 +1,12 @@
 import Head from 'next/head';
+import { useState } from 'react';
 import Map from '../components/Map';
 import PopupContent from '../components/PopupContent';
 import styles from '../styles/Home.module.css';
 
 export default function Home(props) {
   const { center, location, zoom, polygons } = props;
+  const [changeColor, setChangeColor] = useState(false);
 
   return (
     <>
@@ -19,7 +21,7 @@ export default function Home(props) {
           zoom={zoom}
           location={location}
         >
-          {({ TileLayer, Marker, Popup, Polygon }) => (
+          {({ TileLayer, Popup, Polygon }) => (
             <>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -28,11 +30,17 @@ export default function Home(props) {
               {polygons.map((polygon) => (
                 <Polygon
                   key={`polygon ${polygon.id}`}
-                  pathOptions={{ color: polygon.color }}
                   positions={polygon.path}
+                  pathOptions={{
+                    color: !changeColor
+                      ? polygon.colorBefore
+                      : polygon.colorAfter,
+                    weight: 1,
+                    fillOpacity: 0.5,
+                  }}
                 >
                   <Popup>
-                    <PopupContent {...props} />
+                    <PopupContent setChangeColor={setChangeColor} {...props} />
                   </Popup>
                 </Polygon>
               ))}
@@ -48,22 +56,22 @@ export async function getStaticProps() {
   const { getGemeinde, getCapacity } = await import('../utils/database');
 
   const { ev_insgesamt, gemeindename } = await getGemeinde();
-  const capacity = await getCapacity();
-  const pv = capacity.pv['kapazität'];
-  const wind = capacity.wind['kapazität'];
+  const { pv, wind } = await getCapacity();
+
   const aktuellerVerbrauch = ev_insgesamt * 0.3 * 1000;
-  const aktuellerAutarkiegrad = ((pv + wind) * 100) / aktuellerVerbrauch;
+  const aktuellerAutarkiegrad =
+    Math.round(((pv + wind) * 10000) / aktuellerVerbrauch, 2) / 100;
   const zukunftVerbrauch = aktuellerVerbrauch * 1.1224;
   const zukunftSonne = pv * 10;
   const zukunftWind = wind * 2;
   const zukunftAutarkiegrad =
-    ((zukunftWind + zukunftSonne) * 100) / zukunftVerbrauch;
+    Math.round(((zukunftWind + zukunftSonne) * 10000) / zukunftVerbrauch) / 100;
 
   return {
     props: {
-      center: [48.804186, 15.489089],
+      center: [48.207917, 16.371754],
       location: [48.804186, 15.489089],
-      zoom: 13,
+      zoom: 12,
       gemeindeName: gemeindename,
       aktuellerVerbrauch,
       aktuellerAutarkiegrad,
@@ -73,7 +81,8 @@ export async function getStaticProps() {
       polygons: [
         {
           id: 1,
-          color: 'red',
+          colorBefore: '#7f1d1d',
+          colorAfter: '#3f6212',
           path: [
             [48.787114, 15.463584],
             [48.787114, 15.51396],
@@ -85,7 +94,8 @@ export async function getStaticProps() {
         },
         {
           id: 2,
-          color: 'purple',
+          colorBefore: '#b91c1c',
+          colorAfter: '#b91c1c',
           path: [
             [48.822958, 15.463584],
             [48.822958, 15.51396],
@@ -97,7 +107,8 @@ export async function getStaticProps() {
         },
         {
           id: 3,
-          color: 'purple',
+          colorBefore: '#f87171',
+          colorAfter: '#f87171',
           path: [
             [48.787114, 15.51396],
             [48.787114, 15.463584],
@@ -109,7 +120,8 @@ export async function getStaticProps() {
         },
         {
           id: 4,
-          color: 'purple',
+          colorBefore: '#3f6212',
+          colorAfter: '#3f6212',
           path: [
             [48.805036, 15.441391],
             [48.805036, 15.391015],
@@ -121,7 +133,8 @@ export async function getStaticProps() {
         },
         {
           id: 5,
-          color: 'purple',
+          colorBefore: '#f87171',
+          colorAfter: '#f87171',
           path: [
             [48.84088, 15.441391],
             [48.84088, 15.391015],
@@ -133,7 +146,8 @@ export async function getStaticProps() {
         },
         {
           id: 6,
-          color: 'purple',
+          colorBefore: '#ef4444',
+          colorAfter: '#ef4444',
           path: [
             [48.805036, 15.536153],
             [48.805036, 15.586529],
@@ -145,7 +159,8 @@ export async function getStaticProps() {
         },
         {
           id: 7,
-          color: 'purple',
+          colorBefore: '#f87171',
+          colorAfter: '#f87171',
           path: [
             [48.84088, 15.536153],
             [48.84088, 15.586529],
